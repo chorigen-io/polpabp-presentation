@@ -10,9 +10,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.EmailActivationModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Account Activation Result";
-    ViewBag.Description = "Check your account activation result.";
-    ViewBag.Keywords = "account activation,activation result";
+    ViewData["Title"] = "Account Activation Result";
+    ViewData["Description"] = "Check your account activation result.";
+    ViewData["Keywords"] = "account activation,activation result";
 
     var reActivationLink = Url.Page("./ResendActivationLink", new {
         EmailAddress = Model.EmailAddress ?? string.Empty

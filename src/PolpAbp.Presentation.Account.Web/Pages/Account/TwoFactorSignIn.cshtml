@@ -9,9 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.TwoFactorSignInModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Enter Two Factor Authentication Code";
-    ViewBag.Description = "Enter your two factor authentication code to log into your account.";
-    ViewBag.Keywords = "two factor authentication code";
+    ViewData["Title"] = "Enter Two Factor Authentication Code";
+    ViewData["Description"] = "Enter your two factor authentication code to log into your account.";
+    ViewData["Keywords"] = "two factor authentication code";
 }
 
 <h1 class="mb-4 h3">

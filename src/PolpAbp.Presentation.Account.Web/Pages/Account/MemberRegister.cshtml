@@ -11,11 +11,11 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.MemberRegisterModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Join Organization";
-    ViewBag.MetaTitle = "Become a Member of Your Organization on FormLang (Easy & Secure)";
-    ViewBag.Description = "Quickly join your organization on FormLang. Choose to create a new member account or sign up using SSO (Microsoft/Google). Secure your access & unlock member benefits!";
-    ViewBag.Keywords = "join organization";
-    ViewBag.ShowResetButton = true;
+    ViewData["Title"] = "Join Organization";
+    ViewData["MetaTitle"] = "Become a Member of Your Organization on FormLang (Easy & Secure)";
+    ViewData["Description"] = "Quickly join your organization on FormLang. Choose to create a new member account or sign up using SSO (Microsoft/Google). Secure your access & unlock member benefits!";
+    ViewData["Keywords"] = "join organization";
+    ViewData["ShowResetButton"] = true;
 
     var hasCreateMemberMethod = Model.IsRegistrationEnabled && !Model.IsExternalAuthEnforced;
     var hasSsoMethod = Model.IsRegistrationEnabled && (Model.SsoProviders.Count > 0);

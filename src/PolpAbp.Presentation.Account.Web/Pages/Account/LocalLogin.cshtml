@@ -10,10 +10,10 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Sign In (Username/Password)";
-    ViewBag.Description = "Log in to your account using your username and password.";
-    ViewBag.Keywords = "login, sign in, account, username, email, password";
-    ViewBag.ShowResetButton = true;
+    ViewData["Title"] = "Sign In (Username/Password)";
+    ViewData["Description"] = "Log in to your account using your username and password.";
+    ViewData["Keywords"] = "login, sign in, account, username, email, password";
+    ViewData["ShowResetButton"] = true;
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {

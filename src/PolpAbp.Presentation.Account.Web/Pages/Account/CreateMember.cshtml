@@ -11,10 +11,10 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.CreateMemberModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Create Your Member Account";
-    ViewBag.MetaTitle = "Complete Your Sign Up for FormLang";
-    ViewBag.Description = "Almost there! Enter your details to create your member account and unlock the full power of FormLang!";
-    ViewBag.ShowResetButton = true;
+    ViewData["Title"] = "Create Your Member Account";
+    ViewData["MetaTitle"] = "Complete Your Sign Up for FormLang";
+    ViewData["Description"] = "Almost there! Enter your details to create your member account and unlock the full power of FormLang!";
+    ViewData["ShowResetButton"] = true;
 }
 
 

@@ -9,9 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LoginSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Login Success";
-    ViewBag.Description = "Your login was successful.";
-    ViewBag.Keywords = "login success";
+    ViewData["Title"] = "Login Success";
+    ViewData["Description"] = "Your login was successful.";
+    ViewData["Keywords"] = "login success";
 }
 
 @section docReady {

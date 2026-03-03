@@ -10,11 +10,11 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewBag.Title = "Organization Registration Successful";
-    ViewBag.Description = "Congratulations! Your organization registration has been successful.";
-    ViewBag.Keywords = "organization registration,successful,notification";
-    ViewBag.HideTenancyView = true;
-    ViewBag.ShowAppTitle = true;
+    ViewData["Title"] = "Organization Registration Successful";
+    ViewData["Description"] = "Congratulations! Your organization registration has been successful.";
+    ViewData["Keywords"] = "organization registration,successful,notification";
+    ViewData["HideTenancyView"] = true;
+    ViewData["ShowAppTitle"] = true;
 }
 
 <h1 class="mb-4 fs-3">

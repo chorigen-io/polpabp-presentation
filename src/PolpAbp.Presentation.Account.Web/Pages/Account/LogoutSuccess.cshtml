@@ -9,9 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LogoutSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Log Out Success";
-    ViewBag.Description = "You have successfully logged out of your account.";
-    ViewBag.Keywords = "log out success,logged out";
+    ViewData["Title"] = "Log Out Success";
+    ViewData["Description"] = "You have successfully logged out of your account.";
+    ViewData["Keywords"] = "log out success,logged out";
 }
 
 @section docReady {

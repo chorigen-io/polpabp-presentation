@@ -12,10 +12,10 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewBag.Title = "Sign In";
-    ViewBag.Description = "Sign in with your username/email or use SSO to log in quickly and easily";
-    ViewBag.Keywords = "login, sign in, account, SSO, username, email, password";
-    ViewBag.HideTenancyView = false;
+    ViewData["Title"] = "Sign In";
+    ViewData["Description"] = "Sign in with your username/email or use SSO to log in quickly and easily";
+    ViewData["Keywords"] = "login, sign in, account, SSO, username, email, password";
+    ViewData["HideTenancyView"] = false;
 
 
     var reActivationLink = Url.Page("./ResendActivationLink", new

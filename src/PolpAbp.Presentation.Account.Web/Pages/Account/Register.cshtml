@@ -11,11 +11,11 @@
 @inject IBrandingProvider BrandingProvider
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Organization Registration";
-    ViewBag.Description = "Register your organization today to access all of our features and benefits.";
-    ViewBag.keywords = "organization registration,user management,access control,audit logs,events,subscriptions,organization structure,form design,form publication,form flow,workflow";
-    ViewBag.HideTenancyView = true;
-    ViewBag.ShowAppTitle = true;
+    ViewData["Title"] = "Organization Registration";
+    ViewData["Description"] = "Register your organization today to access all of our features and benefits.";
+    ViewData["Keywords"] = "organization registration,user management,access control,audit logs,events,subscriptions,organization structure,form design,form publication,form flow,workflow";
+    ViewData["HideTenancyView"] = true;
+    ViewData["ShowAppTitle"] = true;
 }
 
 <h1 class="mb-1 fs-3">

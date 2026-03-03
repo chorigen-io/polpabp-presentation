@@ -9,11 +9,11 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.ResendActivationLinkSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Account Activation Link Sent";
-    ViewBag.Description = "Your account activation link has been sent.";
-    ViewBag.Keywords = "account activation link sent";
-    ViewBag.HideTenancyView = true;
-    ViewBag.ShowAppTitle = true;
+    ViewData["Title"] = "Account Activation Link Sent";
+    ViewData["Description"] = "Your account activation link has been sent.";
+    ViewData["Keywords"] = "account activation link sent";
+    ViewData["HideTenancyView"] = true;
+    ViewData["ShowAppTitle"] = true;
 }
 
 <h1 class="h3">

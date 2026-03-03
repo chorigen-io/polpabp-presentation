@@ -9,9 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.TwoFactorRequestModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Request Two Factor Authentication Code";
-    ViewBag.Description = "Request a two factor authentication code now.";
-    ViewBag.Keywords = "request two factor authentication code,2fa code,security,authentication";
+    ViewData["Title"] = "Request Two Factor Authentication Code";
+    ViewData["Description"] = "Request a two factor authentication code now.";
+    ViewData["Keywords"] = "request two factor authentication code,2fa code,security,authentication";
 }
 
 <h1 class="mb-4 fs-3">

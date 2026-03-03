@@ -9,9 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.MemberRegisterSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Join Organization Successfully";
-    ViewBag.Description = "Congratulations! You have successfully joined your organization.";
-    ViewBag.keywords = "join organization,successful,notification";
+    ViewData["Title"] = "Join Organization Successfully";
+    ViewData["Description"] = "Congratulations! You have successfully joined your organization.";
+    ViewData["Keywords"] = "join organization,successful,notification";
 }
 
 <h1 class="h3">

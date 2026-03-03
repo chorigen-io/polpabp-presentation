@@ -10,10 +10,10 @@
 @inject IHtmlLocalizer<AccountResource> L
 @inject IHtmlLocalizer<AbpUiMultiTenancyResource> M
 @{
-    ViewBag.Title = "Find Your Organization";
-    ViewBag.Description = "Securely access your team's workspace. Find & select your organization to log in quickly.";
-    ViewBag.ShowAppTitle = true;
-    ViewBag.HideTenancyView = true;
+    ViewData["Title"] = "Find Your Organization";
+    ViewData["Description"] = "Securely access your team's workspace. Find & select your organization to log in quickly.";
+    ViewData["ShowAppTitle"] = true;
+    ViewData["HideTenancyView"] = true;
 }
 
 <h4 class="mb-3 fw-semibold">

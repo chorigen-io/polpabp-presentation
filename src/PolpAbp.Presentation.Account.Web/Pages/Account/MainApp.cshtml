@@ -12,10 +12,10 @@
 @inject IThemeManager ThemeManager
 @{
     Layout = ThemeManager.CurrentTheme.GetApplicationLayout();
-    ViewBag.FluidLayout = false;
-    ViewBag.Title = "Welcome";
-    ViewBag.Description = "You are now logged in and can access the system.";
-    ViewBag.Keywords = "welcome";
+    ViewData["FluidLayout"] = false;
+    ViewData["Title"] = "Welcome";
+    ViewData["Description"] = "You are now logged in and can access the system.";
+    ViewData["Keywords"] = "welcome";
 }
 
 

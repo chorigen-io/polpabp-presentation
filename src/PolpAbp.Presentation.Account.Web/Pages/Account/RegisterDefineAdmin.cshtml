@@ -9,11 +9,11 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterDefineAdminModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Organization Registration - Provide Administrator Information";
-    ViewBag.Description = "Provide the administrator information for your organization.";
-    ViewBag.Keywords = "Provide Administrator Information, organization registration";
-    ViewBag.HideTenancyView = true;
-    ViewBag.ShowAppTitle = true;
+    ViewData["Title"] = "Organization Registration - Provide Administrator Information";
+    ViewData["Description"] = "Provide the administrator information for your organization.";
+    ViewData["Keywords"] = "Provide Administrator Information, organization registration";
+    ViewData["HideTenancyView"] = true;
+    ViewData["ShowAppTitle"] = true;
 }
 
 <h1 class="mb-1 fs-3">
