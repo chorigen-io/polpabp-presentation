@@ -4,10 +4,10 @@
     <Version>8.1.0</Version>
     <NoWarn>CS1591;CS0436</NoWarn>
     <PackageIconUrl>https://avatars.githubusercontent.com/u/96203006</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/dotnetpie-opensource/polpabp-presentation</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Chorigen-io/polpabp-presentation</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/dotnetpie-opensource/polpabp-presentation</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Chorigen-io/polpabp-presentation</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
