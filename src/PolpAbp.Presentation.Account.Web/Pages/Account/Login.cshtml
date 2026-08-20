@@ -16,13 +16,6 @@
     ViewData["Description"] = "Sign in with your username/email or use SSO to log in quickly and easily";
     ViewData["Keywords"] = "login, sign in, account, SSO, username, email, password";
     ViewData["HideTenancyView"] = false;
-
-
-    var reActivationLink = Url.Page("./ResendActivationLink", new
-    {
-        UserName = Model.Input.IsUsingUserName ? Model.Input.UserName : string.Empty,
-        EmailAddress = Model.Input.IsUsingUserName ? string.Empty : Model.Input.EmailAddress
-    });
 }
 
 @section docReady {
@@ -297,13 +290,13 @@
     <form method="post">
 
         <div class="mb-3" data-bind="visible: isUsingUserName">
-            <label for="Input_UserName" class="form-label">@L["DisplayName:UserName"]<span class="text-danger ms-1">*</span></label>
+            <label for="Input_UserName" class="form-label">@L["DisplayName:UserName"]<span class="text-danger ms-1" aria-hidden="true">*</span></label>
             <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
             <span asp-validation-for="Input.UserName" class="text-danger"></span>
         </div>
 
         <div class="mb-3" data-bind="visible: isUsingEmail">
-            <label for="Input_EmailAddress" class="form-label">@L["DisplayName:EmailAddress"]<span class="text-danger ms-1">*</span></label>
+            <label for="Input_EmailAddress" class="form-label">@L["DisplayName:EmailAddress"]<span class="text-danger ms-1" aria-hidden="true">*</span></label>
             <input asp-for="Input.EmailAddress" class="form-control" autocomplete="email" type="email" />
             <span asp-validation-for="Input.EmailAddress" class="text-danger"></span>
         </div>

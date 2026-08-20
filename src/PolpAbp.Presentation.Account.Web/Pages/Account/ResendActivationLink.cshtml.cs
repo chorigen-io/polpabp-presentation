@@ -37,6 +37,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
+            // Fall back to the identifiers handed over by the previous page,
+            // which are not carried in the URL.
+            ConsumeIdentifierHandoff();
+
             if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
                 Input.EmailAddress = NormalizedEmailAddress;
