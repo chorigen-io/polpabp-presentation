@@ -12,6 +12,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected const string HandoffUserNameKey = "PolpAbp.Account.Handoff.UserName";
         protected const string HandoffEmailAddressKey = "PolpAbp.Account.Handoff.EmailAddress";
         protected const string HandoffIsUsingUserNameKey = "PolpAbp.Account.Handoff.IsUsingUserName";
+        protected const string HandoffStampKey = "PolpAbp.Account.Handoff.Stamp";
+
+        // A stash that is never consumed (the redirect GET never lands) would otherwise
+        // sit in the TempData cookie for the rest of the browser session.
+        protected static readonly TimeSpan HandoffLifetime = TimeSpan.FromMinutes(2);
 
         [BindProperty(SupportsGet = true)]
         public string? UserName { get; set; }
@@ -52,6 +57,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             TempData[HandoffUserNameKey] = UserName;
             TempData[HandoffEmailAddressKey] = EmailAddress;
             TempData[HandoffIsUsingUserNameKey] = IsUsingUserName.ToString();
+            TempData[HandoffStampKey] = DateTime.UtcNow.Ticks.ToString();
         }
 
         /// <summary>
@@ -65,6 +71,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             var handoffUserName = TempData[HandoffUserNameKey] as string;
             var handoffEmailAddress = TempData[HandoffEmailAddressKey] as string;
             var handoffIsUsingUserName = TempData[HandoffIsUsingUserNameKey] as string;
+            var handoffStamp = TempData[HandoffStampKey] as string;
+
+            // A stash is only honored for the immediate hop; an old one (an abandoned
+            // hand-off resurfacing in a later visit or another tab) is discarded.
+            if (!long.TryParse(handoffStamp, out var stampTicks)
+                || DateTime.UtcNow - new DateTime(stampTicks, DateTimeKind.Utc) > HandoffLifetime)
+            {
+                return;
+            }
 
             if (string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(handoffUserName))
             {

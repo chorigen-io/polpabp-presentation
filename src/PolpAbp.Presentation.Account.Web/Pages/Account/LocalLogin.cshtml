@@ -58,7 +58,7 @@
     <div class="mb-3 password-wrapper">
         <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1" aria-hidden="true">*</span></label>
         <div class="input-group">
-            <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" />
+            <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" aria-required="true" />
             <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="Show password" aria-pressed="false">
                 <i class="toggle-icon fa fa-eye"></i>
             </button>
