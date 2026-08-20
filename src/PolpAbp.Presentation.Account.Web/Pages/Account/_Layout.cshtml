@@ -15,3 +15,24 @@
 <div class="abp-account-container">
     @RenderBody()
 </div>
+
+<script type="text/javascript">
+    // Keeps the accessible name and state of every show/hide password toggle in
+    // step with what it does. Capture phase is required: the visibility booter's
+    // own click handler stops propagation, so a bubble-phase listener never runs.
+    // The booter also reveals every wrapped password field on the page at once,
+    // so all toggle buttons move to the new state together.
+    document.addEventListener('click', function (evt) {
+        var button = evt.target.closest ? evt.target.closest('.toggle-password') : null;
+        if (!button) {
+            return;
+        }
+
+        var revealed = button.getAttribute('aria-pressed') !== 'true';
+        var toggles = document.querySelectorAll('.toggle-password');
+        for (var i = 0; i < toggles.length; i++) {
+            toggles[i].setAttribute('aria-pressed', revealed ? 'true' : 'false');
+            toggles[i].setAttribute('aria-label', revealed ? 'Hide password' : 'Show password');
+        }
+    }, true);
+</script>

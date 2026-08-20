@@ -14,20 +14,6 @@
     ViewData["Description"] = "Log in to your account using your username and password.";
     ViewData["Keywords"] = "login, sign in, account, username, email, password";
     ViewData["ShowResetButton"] = true;
-
-    var reActivationLink = Url.Page("./ResendActivationLink", new
-    {
-        IsUsingUserName = Model.IsUsingUserName,
-        UserName = Model.UserName, 
-        EmailAddress = Model.EmailAddress
-    });
-
-    var forgotPwdLink = Url.Page("./ForgotPassword", new
-    {
-        IsUsingUserName = Model.IsUsingUserName,
-        UserName = Model.UserName,
-        EmailAddress = Model.EmailAddress
-    });
 }
 
 @if (Model.ShowActivationLink)
@@ -37,9 +23,11 @@
             To keep things secure,
             we need you to activate your account using the link in the email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
         </p>
-        <p>
-            Click <a href="@reActivationLink">here</a> to request a new activation email.
-        </p>
+        <form method="post">
+            <p>
+                Click <button type="submit" name="Action" value="ResendActivation" class="btn btn-link p-0 align-baseline">here</button> to request a new activation email.
+            </p>
+        </form>
         <p>
             Once you've activated your account, you can come back here and sign in!
         </p>
@@ -68,10 +56,10 @@
     </div>
 
     <div class="mb-3 password-wrapper">
-        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1">*</span></label>
+        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1" aria-hidden="true">*</span></label>
         <div class="input-group">
-            <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" />
-            <button type="button" class="toggle-password btn btn-outline-secondary">
+            <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" aria-required="true" />
+            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="Show password" aria-pressed="false">
                 <i class="toggle-icon fa fa-eye"></i>
             </button>
         </div>
@@ -94,9 +82,9 @@
             @L["Continue"]
             <span class="spinner-box"></span>
         </abp-button>
-        <a abp-button="Secondary" href="@forgotPwdLink">
+        <abp-button type="submit" button-type="Secondary" name="Action" value="ForgotPassword" formnovalidate="formnovalidate">
             @L["ForgotPassword"]
-        </a>
+        </abp-button>
     </div>
 </form>
 

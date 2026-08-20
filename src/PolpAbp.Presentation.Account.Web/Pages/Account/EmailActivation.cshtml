@@ -13,8 +13,4 @@
     ViewData["Title"] = "Account Activation Result";
     ViewData["Description"] = "Check your account activation result.";
     ViewData["Keywords"] = "account activation,activation result";
-
-    var reActivationLink = Url.Page("./ResendActivationLink", new {
-        EmailAddress = Model.EmailAddress ?? string.Empty
-    });
 }

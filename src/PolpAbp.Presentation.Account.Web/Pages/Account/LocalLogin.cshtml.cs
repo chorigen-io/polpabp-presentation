@@ -45,6 +45,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnPostAsync(string action)
         {
+            if (action == "ForgotPassword" || action == "ResendActivation")
+            {
+                // Hand the identifiers over out of band, so that they never appear in the URL.
+                // No settings are needed on this path.
+                StashIdentifierHandoff();
+
+                return RedirectToPage(action == "ForgotPassword" ? "./ForgotPassword" : "./ResendActivationLink");
+            }
+
             // Load settings
             await LoadSettingsAsync();
 
