@@ -1,4 +1,4 @@
-﻿@page "/account/verify-password"
+@page "/account/verify-password"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -21,7 +21,7 @@
     <div class="alert alert-danger">
         <p>
             To keep things secure,
-            we need you to activate your account using the link in the email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
+            we need you to activate your account using the link in the email we sent you. We can send you a new one.
         </p>
         <form method="post">
             @* The identifiers are no longer in this page's URL, so every form carries them itself. *@
@@ -33,7 +33,7 @@
             </p>
         </form>
         <p>
-            Once you've activated your account, you can come back here and sign in!
+            Once your account is activated, you can return here to sign in.
         </p>
     </div>
 }
@@ -42,14 +42,13 @@
     Enter Password
 </h1>
 <div class="mb-4">
-    <a href="@Url.Page("./Login")">
+    <a class="cg-back" href="@Url.Page("./Login")">
         <i class="fas fa-chevron-left me-1"></i>Back
     </a>
 </div>
 
 <p>
-    Great to see you again!
-    Please enter your password to sign in.
+    @L["Account_VerifyPassword_Intro"]
 </p>
 
 <form method="post">
@@ -64,7 +63,7 @@
     <input type="hidden" asp-for="IsUsingUserName" />
 
     <div class="mb-3">
-        <label for="Input_AccountId" class="form-label">@L["DisplayName:AccountId"]</label>
+        <label for="Input_AccountId" class="form-label">@L["Account_SigningInAs"]</label>
         <input asp-for="Input.AccountId" class="form-control" readonly autocomplete="username" />
     </div>
 

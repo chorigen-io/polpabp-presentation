@@ -1,4 +1,4 @@
-﻿@page "/account/sign-up"
+@page "/account/sign-up"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -12,8 +12,8 @@
 @inject IHtmlLocalizer<AccountResource> L
 @{
     ViewData["Title"] = "Join Organization";
-    ViewData["MetaTitle"] = "Become a Member of Your Organization on FormLang (Easy & Secure)";
-    ViewData["Description"] = "Quickly join your organization on FormLang. Choose to create a new member account or sign up using SSO (Microsoft/Google). Secure your access & unlock member benefits!";
+    ViewData["MetaTitle"] = "Join your organization on Chorigen";
+    ViewData["Description"] = "Join your organization on Chorigen. Create a member account, or sign in with Microsoft or Google.";
     ViewData["Keywords"] = "join organization";
     ViewData["ShowResetButton"] = true;
 
@@ -27,7 +27,7 @@
     Welcome to Your Organization - Sign Up Here!
 </h1>
 <div class="mb-4">
-    <a href="@Url.Page("./FindOrganization")">
+    <a class="cg-back" href="@Url.Page("./FindOrganization")">
         <i class="fas fa-chevron-left me-1"></i>Back
     </a>
 </div>

@@ -1,4 +1,4 @@
-﻿@page "/account/sign-in"
+@page "/account/sign-in"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -173,6 +173,11 @@
                 viewModel.optionsVisible(true);
             });
 
+            $(".card").on('click', '.cg-switch-identifier', () => {
+                const $box = $('#Input_IsUsingUserName');
+                $box.prop('checked', !$box.prop('checked')).trigger('change');
+            });
+
             $('#Input_IsUsingUserName').change(
                 function () {
                     if (this.checked) {
@@ -211,7 +216,7 @@
     </a>
 </div>
 <div class="mb-4" data-bind="visible: hasNoUserOptions">
-    <a  href="@Url.Page("./FindOrganization")">
+    <a class="cg-back"  href="@Url.Page("./FindOrganization")">
         <i class="fas fa-chevron-left me-1"></i>Back
     </a>
 </div>
@@ -219,8 +224,7 @@
 <!-- Pick an account -->
 <div class="pick-one-account" data-bind="visible: optionsVisible">
     <p>
-        Welcome back!
-        We've found your most recently used accounts. Click your account to sign in, or click "Use a differnt account" to sign in with a different account.
+        @L["Account_SignIn_PickAccount"]
     </p>
     <ul class="list-unstyled" data-bind="foreach: users">
         <li class="d-flex mb-4 border-bottom" data-bind="ifnot: $parent.isUsingUserName">
@@ -269,7 +273,7 @@
             </div>
             <div class="flex-grow-1 ms-3">
                 <a class="h6 new-account pe-5" style="cursor: pointer">
-                    Use a differnt account
+                    @L["Account_SignIn_UseDifferentAccount"]
                 </a>
             </div>
         </li>
@@ -280,11 +284,11 @@
 <div data-bind="visible: formVisible">
 
     <p data-bind="visible: isUsingUserName">
-        Let's find your account! Enter your username and click 'Continue'.
+        @L["Account_SignIn_Intro_UserName"]
     </p>
 
     <p data-bind="visible: isUsingEmail">
-        Let's find your account! Enter your email address and click 'Continue'.
+        @L["Account_SignIn_Intro"]
     </p>
 
     <form method="post">
@@ -301,14 +305,20 @@
             <span asp-validation-for="Input.EmailAddress" class="text-danger"></span>
         </div>
 
-        <div class="form-check mb-3">
-            <input asp-for="Input.IsUsingUserName" class="form-check-input" type="checkbox" aria-describedby="IsUsingUserNameHelp">
-            <label class="form-check-label" for="Input_IsUsingUserName">
-                Enable username lookup
-            </label>
-            <div id="IsUsingUserNameHelp" class="form-text">
-                Switch to search by Username (otherwise, search by email).
-            </div>
+        @*  The bound field is posted, so it is kept and hidden rather than removed;
+            only its presentation changes. The visible control is a button because it
+            changes what this page asks for -- it does not submit or navigate. *@
+        <input asp-for="Input.IsUsingUserName" class="d-none" type="checkbox" />
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-link p-0 cg-switch-identifier"
+                    data-bind="visible: isUsingEmail">
+                @L["Account_SignIn_UseUsername"]
+            </button>
+            <button type="button" class="btn btn-link p-0 cg-switch-identifier"
+                    data-bind="visible: isUsingUserName">
+                @L["Account_SignIn_UseEmail"]
+            </button>
         </div>
 
         <div class="d-grid gap-2">
@@ -321,18 +331,11 @@
     </form>
 </div>    
 
-<div class="mt-4">
-    <h2 class="h5">New to your organization? Don't have an account?</h2>
-    <p>
-        Sign up now to unlock all the powerful features of FormLang and collaborate seamlessly with your team.
-    </p>
-
-    <div class="d-grid gap-2">
-        <a class="btn btn-outline-primary" href="@Url.Page("/Account/MemberRegister", new { AutoRedirect = true })">
-            Join Now
-        </a>
-    </div>
-</div>
+@*  The account-acquisition block that stood here was removed by feature
+    20260901-144857-auth-surface-restyle (FR-005): a second full-width call to action
+    beside a credential form competes with the one thing the user came to do, and its
+    copy named a retired brand. Joining an organization remains reachable from the
+    organization-selection step, which is where choosing an account route belongs. *@
 
 <div id="globalSpinner" class="modal-spinner position-absolute top-0 w-100 h-100 bg-light bg-opacity-75 text-center">
     <div class="spinner-border position-relative top-50" role="status">
