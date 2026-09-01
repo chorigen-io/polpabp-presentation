@@ -17,7 +17,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [CurrentTenantRequired]
     [UnauthenticatedUser]
-    [UserNameOrEmailRequired]
+    // No [UserNameOrEmailRequired]: that filter reads the query string only, and this page
+    // deliberately no longer carries the identifiers there. The equivalent guard lives in the
+    // handlers below, where the hand-off and the form body are both visible.
     public class LocalLoginModel : LoginModelBase
     {
         [BindProperty]
@@ -37,6 +39,20 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
+            // Fall back to the identifiers handed over by the sign-in page, which are not
+            // carried in the URL. The allowance is the reload window, not the redirect hop's,
+            // because this page re-stashes on every render (below) so that a refresh keeps
+            // the visitor's place.
+            ConsumeIdentifierHandoff(ReloadHandoffLifetime);
+
+            if (!HasIdentifierContext)
+            {
+                return RedirectToSignIn();
+            }
+
+            // Restart the reload window from this render.
+            StashIdentifierHandoff();
+
             // Load settings
             await LoadSettingsAsync();
 
@@ -45,6 +61,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnPostAsync(string action)
         {
+            // The identifiers now arrive in hidden form fields rather than the URL. Without
+            // them there is no account to act on, whichever button was pressed — so this runs
+            // before the recovery-link branch below.
+            if (!HasIdentifierContext)
+            {
+                return RedirectToSignIn();
+            }
+
             if (action == "ForgotPassword" || action == "ResendActivation")
             {
                 // Hand the identifiers over out of band, so that they never appear in the URL.
@@ -53,6 +77,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 return RedirectToPage(action == "ForgotPassword" ? "./ForgotPassword" : "./ResendActivationLink");
             }
+
+            // Restart the reload window: from here the request either re-renders this page or
+            // leaves the sign-in chain for good.
+            StashIdentifierHandoff();
 
             // Load settings
             await LoadSettingsAsync();
@@ -209,6 +237,20 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             return Page();
+        }
+
+        /// <summary>
+        /// There is no password to verify without an account, so a visitor who reaches this page
+        /// with no identifier — a bookmark, a stale link, an expired hand-off — starts over on the
+        /// sign-in page with wherever they were heading intact.
+        /// </summary>
+        protected virtual IActionResult RedirectToSignIn()
+        {
+            return RedirectToPage("./Login", new
+            {
+                returnUrl = ReturnUrl,
+                returnUrlHash = ReturnUrlHash
+            });
         }
 
         protected virtual async Task CheckLocalLoginAsync()

@@ -24,6 +24,10 @@
             we need you to activate your account using the link in the email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
         </p>
         <form method="post">
+            @* The identifiers are no longer in this page's URL, so every form carries them itself. *@
+            <input type="hidden" asp-for="UserName" />
+            <input type="hidden" asp-for="EmailAddress" />
+            <input type="hidden" asp-for="IsUsingUserName" />
             <p>
                 Click <button type="submit" name="Action" value="ResendActivation" class="btn btn-link p-0 align-baseline">here</button> to request a new activation email.
             </p>
@@ -49,6 +53,15 @@
 </p>
 
 <form method="post">
+
+    @* The identifiers are no longer in this page's URL, so the form carries them itself:
+       a failed password retry, Forgot Password and the resend-activation button all need to
+       know which account they are acting on. Hidden inputs ride inside the same antiforgery-
+       protected POST and, unlike the hand-off, are not bounded by a lifetime — a visitor who
+       takes their time entering a password must still be able to sign in. *@
+    <input type="hidden" asp-for="UserName" />
+    <input type="hidden" asp-for="EmailAddress" />
+    <input type="hidden" asp-for="IsUsingUserName" />
 
     <div class="mb-3">
         <label for="Input_AccountId" class="form-label">@L["DisplayName:AccountId"]</label>

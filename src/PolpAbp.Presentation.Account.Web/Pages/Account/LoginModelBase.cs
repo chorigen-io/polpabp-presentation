@@ -18,6 +18,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         // sit in the TempData cookie for the rest of the browser session.
         protected static readonly TimeSpan HandoffLifetime = TimeSpan.FromMinutes(2);
 
+        // The password page re-stashes on every render so that a reload keeps the visitor's
+        // place. That is a person sitting on a page, not a redirect hop, so it gets its own
+        // longer allowance; widening HandoffLifetime instead would silently widen the
+        // recovery-link hop above, which this change must leave alone.
+        protected static readonly TimeSpan ReloadHandoffLifetime = TimeSpan.FromMinutes(5);
+
         [BindProperty(SupportsGet = true)]
         public string? UserName { get; set; }
 
@@ -30,6 +36,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public string NormalizedUserName => UserName ?? string.Empty;
 
         public string NormalizedEmailAddress => EmailAddress ?? string.Empty;
+
+        /// <summary>
+        /// Whether this request knows who is signing in. Pages that no longer carry the
+        /// identifiers in their URL cannot rely on an authorization filter for this — the
+        /// answer is only available after model binding and the hand-off have both run.
+        /// </summary>
+        protected bool HasIdentifierContext =>
+            !string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(EmailAddress);
 
         protected override async Task LoadSettingsAsync()
         {
@@ -64,8 +78,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         /// Consumes the identifiers stashed by the previous request. Values bound
         /// from the query string stay authoritative; the hand-off is the fallback.
         /// </summary>
-        protected virtual void ConsumeIdentifierHandoff()
+        /// <param name="lifetime">
+        /// How old a stash may be and still be honored. Defaults to <see cref="HandoffLifetime"/>,
+        /// which sizes a single redirect hop. A page that re-stashes on every render to survive a
+        /// reload passes its own, longer allowance instead.
+        /// </param>
+        protected virtual void ConsumeIdentifierHandoff(TimeSpan? lifetime = null)
         {
+            var allowance = lifetime ?? HandoffLifetime;
+
             // Read every key, even when the query string wins, so that nothing
             // stashed here survives into a later request.
             var handoffUserName = TempData[HandoffUserNameKey] as string;
@@ -76,7 +97,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // A stash is only honored for the immediate hop; an old one (an abandoned
             // hand-off resurfacing in a later visit or another tab) is discarded.
             if (!long.TryParse(handoffStamp, out var stampTicks)
-                || DateTime.UtcNow - new DateTime(stampTicks, DateTimeKind.Utc) > HandoffLifetime)
+                || DateTime.UtcNow - new DateTime(stampTicks, DateTimeKind.Utc) > allowance)
             {
                 return;
             }
