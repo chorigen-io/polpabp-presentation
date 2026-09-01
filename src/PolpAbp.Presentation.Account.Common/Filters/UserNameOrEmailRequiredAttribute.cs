@@ -5,6 +5,19 @@ using Microsoft.AspNetCore.Mvc.Filters;
 // So we do not need additional namespace in the pages.
 namespace PolpAbp.Presentation.Account
 {
+    /// <summary>
+    /// Redirects a request that carries no <c>UserName</c> or <c>EmailAddress</c> in its
+    /// <b>query string</b>.
+    /// </summary>
+    /// <remarks>
+    /// <b>Do not apply this to a page that keeps identifiers out of its URL.</b> As an
+    /// <see cref="IAuthorizationFilter"/> it runs before model binding, so it can see neither the
+    /// one-hop identifier hand-off nor a hidden form field — on such a page it bounces every
+    /// request, GET and POST alike. Guard inside the PageModel instead, after the hand-off has
+    /// been consumed; <c>LocalLoginModel</c> is the worked example.
+    ///
+    /// Retained as public API for consumers outside this repository.
+    /// </remarks>
     public class UserNameOrEmailRequiredAttribute : Attribute, IAuthorizationFilter
     {
         private readonly string _redirectUrl;

@@ -124,17 +124,35 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         if (!user.IsExternal)
                         {
+                            // Hand the identifiers over out of band, so that they never appear
+                            // in the password page's URL. This is the highest-traffic hop on the
+                            // sign-in path: every password sign-in crosses it, and a URL persists
+                            // in browser history and in server and proxy access logs.
+                            UserName = user.UserName;
+                            EmailAddress = user.Email;
+
+                            // The redirect this replaces never carried IsUsingUserName, so the
+                            // password page has always resolved and displayed the e-mail address
+                            // whichever identifier the visitor typed. Forcing it false keeps that
+                            // exactly as it was: this change moves the identifiers out of the URL
+                            // and changes nothing about which account is looked up.
+                            IsUsingUserName = false;
+
+                            StashIdentifierHandoff();
+
                             return RedirectToPage("./LocalLogin", new
                             {
-                                // todo: Maybe use Id
-                                UserName = user.UserName,
-                                EmailAddress = user.Email,
                                 returnUrl = ReturnUrl,
                                 returnUrlHash = ReturnUrlHash
                             });
                         }
                         else
                         {
+                            // Same identifier-in-URL defect as above, deliberately left alone:
+                            // the SSO pages in sso/azure and sso/google read these query values,
+                            // so the fix has to land across three repositories at once and is
+                            // folded into the separate SSO rework. See chorigen-identity#73.
+
                             // Figure out the provider name.
                             var providerName = user.GetProperty<string>(ExternalProperties.UserIdentity.SsoScheme);
                             if (!string.IsNullOrEmpty(providerName))
