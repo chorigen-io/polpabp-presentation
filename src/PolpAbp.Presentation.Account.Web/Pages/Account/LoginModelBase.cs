@@ -30,8 +30,34 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public string? EmailAddress { get; set; }
 
+        private bool _isUsingUserName;
+
+        /// <summary>
+        /// Whether the visitor identified themselves by username rather than by e-mail address.
+        /// </summary>
+        /// <remarks>
+        /// The setter records that a value arrived, because for a <see cref="bool"/> "supplied as
+        /// false" and "never supplied at all" are otherwise indistinguishable — and the hand-off's
+        /// precedence rule, that a value already on the request wins over a stashed one, has to
+        /// tell them apart. Model binding calls this setter only when the request actually carried
+        /// the value, which is exactly the signal needed.
+        /// </remarks>
         [BindProperty(SupportsGet = true)]
-        public bool IsUsingUserName { get; set; }
+        public bool IsUsingUserName
+        {
+            get => _isUsingUserName;
+            set
+            {
+                _isUsingUserName = value;
+                IsUsingUserNameSupplied = true;
+            }
+        }
+
+        /// <summary>
+        /// Whether <see cref="IsUsingUserName"/> carries a value this request supplied, as opposed
+        /// to the default it would hold either way.
+        /// </summary>
+        protected bool IsUsingUserNameSupplied { get; private set; }
 
         public string NormalizedUserName => UserName ?? string.Empty;
 
@@ -140,9 +166,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 EmailAddress = handoffEmailAddress;
             }
 
-            if (!IsUsingUserName && bool.TryParse(handoffIsUsingUserName, out var isUsingUserName))
+            // Assigns the field rather than the property: this is the fallback filling a gap the
+            // request left, not a value the request supplied, and marking it as supplied would
+            // misreport it to anything that asks later.
+            if (!IsUsingUserNameSupplied && bool.TryParse(handoffIsUsingUserName, out var isUsingUserName))
             {
-                IsUsingUserName = isUsingUserName;
+                _isUsingUserName = isUsingUserName;
             }
         }
 
