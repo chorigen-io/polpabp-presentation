@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Extensions;
 using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
@@ -30,26 +29,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            // Flatten the ReturnURL
-            var innerQueryParams = GetReturnUrlQueryParameters(ReturnUrl);
-            if (innerQueryParams.ContainsKey("username"))
-            {
-                UserName = innerQueryParams["username"];
-            }
+            // Identifiers are read from this page's own request parameters only, never from
+            // inside the caller-supplied returnUrl. A returnUrl carrying username= used to be
+            // parsed here and pre-filled from, and then travelled on to the password page --
+            // putting the identifier back into an address through the side door. A caller that
+            // wants pre-fill passes ?username= to this page directly, which still works; the
+            // returnUrl itself is carried onward untouched, never parsed and never rewritten.
+            // See chorigen-identity#81.
 
-            if (innerQueryParams.ContainsKey("emailaddress"))
-            {
-                EmailAddress = innerQueryParams["emailaddress"];
-            }
-
-            if (innerQueryParams.ContainsKey("isusingusername"))
-            {
-                IsUsingUserName = Boolean.Parse(innerQueryParams["isusingusername"]);
-            }
-
-            // Note that only one of the two values should be set. 
-            // UserName or EmailAddress 
-            // It it the caller which decide what to do. 
+            // Note that only one of the two values should be set.
+            // UserName or EmailAddress
+            // It it the caller which decide what to do.
 
             // TenantId
             TenantId = CurrentTenant.Id;
@@ -128,17 +118,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             // in the password page's URL. This is the highest-traffic hop on the
                             // sign-in path: every password sign-in crosses it, and a URL persists
                             // in browser history and in server and proxy access logs.
-                            UserName = user.UserName;
-                            EmailAddress = user.Email;
-
-                            // The redirect this replaces never carried IsUsingUserName, so the
-                            // password page has always resolved and displayed the e-mail address
-                            // whichever identifier the visitor typed. Forcing it false keeps that
-                            // exactly as it was: this change moves the identifiers out of the URL
-                            // and changes nothing about which account is looked up.
-                            IsUsingUserName = false;
-
-                            StashIdentifierHandoff();
+                            //
+                            // The visitor's own choice travels with them. It used to be pinned
+                            // false here, so the password page named and looked up the account by
+                            // e-mail address however the visitor had identified themselves --
+                            // showing a username visitor an address they never typed, and leaving
+                            // an account with no address on file unable to sign in at all.
+                            // See chorigen-identity#81.
+                            CaptureIdentifierHandoff(user.UserName, user.Email, Input.IsUsingUserName);
 
                             return RedirectToPage("./LocalLogin", new
                             {
@@ -212,59 +199,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string EmailAddress { get; set; }
 
-        }
-
-
-        public static Dictionary<string, string> GetReturnUrlQueryParameters(string returnUrl)
-        {
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                return new Dictionary<string, string>();
-            }
-
-            // Split the returnUrl at the '?' character to separate the base URL and query string
-            var parts = returnUrl.Split('?');
-            if (parts.Length < 2)
-            {
-                return new Dictionary<string, string>();
-            }
-
-            // Extract the query string
-            var queryString = parts[1];
-
-            // Parse the query string into key-value pairs
-            var queryDictionary = new Dictionary<string, string>();
-            foreach (var keyValuePair in queryString.Split('&'))
-            {
-                var pair = keyValuePair.Split('=');
-                if (pair.Length == 2)
-                {
-                    var decodedKey = Uri.UnescapeDataString(pair[0]).ToLower();
-                    var decodedValue = DecodeStringFully(pair[1]);
-                    queryDictionary.Add(decodedKey, decodedValue);
-                }
-            }
-
-            return queryDictionary;
-        }
-
-        public static string DecodeStringFully(string encodedString)
-        {
-            if (string.IsNullOrEmpty(encodedString))
-            {
-                return encodedString;
-            }
-
-            string decodedString = encodedString;
-            string previousDecodedString;
-
-            do
-            {
-                previousDecodedString = decodedString;
-                decodedString = HttpUtility.UrlDecode(decodedString);
-            } while (decodedString != previousDecodedString);
-
-            return decodedString;
         }
     }
 }
