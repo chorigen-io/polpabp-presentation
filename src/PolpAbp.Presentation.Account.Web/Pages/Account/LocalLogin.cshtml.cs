@@ -266,7 +266,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             RegistrationApprovalType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
 
-            Input.AccountId = IsUsingUserName ? NormalizedUserName : NormalizedEmailAddress;
+            Input.AccountId = SelectedIdentifier;
         }
 
         public class PostInput

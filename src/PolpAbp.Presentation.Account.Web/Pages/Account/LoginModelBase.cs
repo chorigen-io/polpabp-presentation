@@ -45,6 +45,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected bool HasIdentifierContext =>
             !string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(EmailAddress);
 
+        /// <summary>
+        /// The identifier this sign-in is about: whichever one the visitor chose to identify
+        /// themselves with. Pages name the account by this and look it up by this, so the two
+        /// can never disagree.
+        /// </summary>
+        public string SelectedIdentifier => IsUsingUserName ? NormalizedUserName : NormalizedEmailAddress;
+
         protected override async Task LoadSettingsAsync()
         {
             await base.LoadSettingsAsync();
@@ -60,6 +67,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnLogin);
             }
+        }
+
+        /// <summary>
+        /// Records who is signing in and how they said so, then hands it to the next request.
+        /// </summary>
+        /// <param name="userName">The account's canonical username.</param>
+        /// <param name="emailAddress">The account's e-mail address, which may be empty.</param>
+        /// <param name="isUsingUserName">Which of the two the visitor actually used.</param>
+        /// <remarks>
+        /// Takes the two identifiers as plain strings rather than the account record, so that a
+        /// test can express an account with no e-mail address — a state the account model forbids
+        /// at construction and whose setter is out of reach from the test assembly, yet one that
+        /// reaches this code from stored data and, until this was fixed, blocked sign-in outright.
+        /// </remarks>
+        protected virtual void CaptureIdentifierHandoff(string? userName, string? emailAddress, bool isUsingUserName)
+        {
+            UserName = userName;
+            EmailAddress = emailAddress;
+            IsUsingUserName = isUsingUserName;
+
+            StashIdentifierHandoff();
         }
 
         /// <summary>
