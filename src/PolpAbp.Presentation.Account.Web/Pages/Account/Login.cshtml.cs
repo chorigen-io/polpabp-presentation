@@ -114,24 +114,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         if (!user.IsExternal)
                         {
-                            // Hand the identifiers over out of band, so that they never appear
-                            // in the password page's URL. This is the highest-traffic hop on the
-                            // sign-in path: every password sign-in crosses it, and a URL persists
-                            // in browser history and in server and proxy access logs.
-                            //
-                            // The visitor's own choice travels with them. It used to be pinned
-                            // false here, so the password page named and looked up the account by
-                            // e-mail address however the visitor had identified themselves --
-                            // showing a username visitor an address they never typed, and leaving
-                            // an account with no address on file unable to sign in at all.
-                            // See chorigen-identity#81.
-                            CaptureIdentifierHandoff(user.UserName, user.Email, Input.IsUsingUserName);
-
-                            return RedirectToPage("./LocalLogin", new
-                            {
-                                returnUrl = ReturnUrl,
-                                returnUrlHash = ReturnUrlHash
-                            });
+                            return HandOffToPasswordPage(user);
                         }
                         else
                         {
@@ -184,6 +167,36 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             return Page();
+        }
+
+        /// <summary>
+        /// Sends a visitor whose local account has been resolved on to the password page,
+        /// carrying who they are and how they said so.
+        /// </summary>
+        /// <remarks>
+        /// Extracted so the choice this hands over can be asserted. Inline in the handler above
+        /// it could not be: that method resolves the user manager, which needs a container the
+        /// test project does not have. Here a test constructs the page, sets the posted input,
+        /// and reads back what would travel.
+        /// </remarks>
+        protected virtual IActionResult HandOffToPasswordPage(IdentityUser user)
+        {
+            // Out of band, so the identifiers never appear in the password page's URL. This is
+            // the highest-traffic hop on the sign-in path: every password sign-in crosses it, and
+            // a URL persists in browser history and in server and proxy access logs.
+            //
+            // The visitor's own choice travels with them. It used to be pinned false here, so the
+            // password page named and looked up the account by e-mail address however the visitor
+            // had identified themselves -- showing a username visitor an address they never
+            // typed, and leaving an account with no address on file unable to sign in at all.
+            // See chorigen-identity#81.
+            CaptureIdentifierHandoff(user.UserName, user.Email, Input.IsUsingUserName);
+
+            return RedirectToPage("./LocalLogin", new
+            {
+                returnUrl = ReturnUrl,
+                returnUrlHash = ReturnUrlHash
+            });
         }
 
         public class LoginInputModel
