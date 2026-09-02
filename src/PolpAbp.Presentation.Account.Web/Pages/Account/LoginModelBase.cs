@@ -68,8 +68,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         /// identifiers in their URL cannot rely on an authorization filter for this — the
         /// answer is only available after model binding and the hand-off have both run.
         /// </summary>
-        protected bool HasIdentifierContext =>
-            !string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(EmailAddress);
+        /// <remarks>
+        /// Keyed off the identifier actually selected, not off either one being present. A
+        /// request that names one identifier kind while supplying the other used to pass this
+        /// guard, render a password form with a blank account name, and then discard whatever
+        /// was typed into it with the reason lost across a redirect. See chorigen-identity#91.
+        /// </remarks>
+        protected bool HasIdentifierContext => !string.IsNullOrEmpty(SelectedIdentifier);
 
         /// <summary>
         /// The identifier this sign-in is about: whichever one the visitor chose to identify
