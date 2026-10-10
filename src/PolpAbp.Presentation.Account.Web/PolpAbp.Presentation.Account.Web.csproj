@@ -4,7 +4,7 @@
 	<Import Project="..\..\common.props" />	
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<AssemblyName>PolpAbp.Presentation.Account.Web</AssemblyName>
 		<PackageId>PolpAbp.Presentation.Account.Web</PackageId>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -15,18 +15,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AspNetCore.ReCaptcha" Version="1.8.1" />
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Volo.Abp.Core" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.AutoMapper" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.Emailing" Version="8.0.5" />
-		<PackageReference Include="Volo.Abp.Sms" Version="8.0.5" />
+		<PackageReference Include="AspNetCore.ReCaptcha" Version="1.8.2" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.11" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Volo.Abp.Core" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.Mapperly" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.Emailing" Version="10.7.0" />
+		<PackageReference Include="Volo.Abp.Sms" Version="10.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
