@@ -1,6 +1,5 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PolpAbp.Framework.Mvc.Cookies;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
