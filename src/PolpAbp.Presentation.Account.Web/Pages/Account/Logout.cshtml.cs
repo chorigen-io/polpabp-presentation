@@ -31,7 +31,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             
             if (!string.IsNullOrEmpty(ReturnUrl))
             {
-                return RedirectSafely(ReturnUrl, ReturnUrlHash);
+                return await RedirectSafelyAsync(ReturnUrl, ReturnUrlHash);
             }
 
             return RedirectToPage("./LogoutSuccess");
