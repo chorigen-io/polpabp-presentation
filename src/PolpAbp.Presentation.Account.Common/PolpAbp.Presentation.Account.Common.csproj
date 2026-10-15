@@ -25,4 +25,16 @@
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Core.Shared\PolpAbp.Framework.Core.Shared.csproj" />
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Application.Contracts\PolpAbp.Framework.Application.Contracts.csproj" />
 	</ItemGroup>
+
+	<!--
+	  Transitive pins (chorigen-io/chorigen-file-system#100). ABP 10.7 pulls Microsoft.AspNetCore.DataProtection
+	  10.0.11, which pulls System.Security.Cryptography.Xml and .Pkcs at 10.0.11, inside the 2026-10-13
+	  denial-of-service advisories (fixed in 10.0.13). Versions follow the family manifest
+	  (nanshiee-formsystem-tools targets/net10-abp10.7.json); drop both once ABP ships DataProtection >= 10.0.13.
+	-->
+	<ItemGroup>
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+		<PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
+	</ItemGroup>
+
 </Project>
