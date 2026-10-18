@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Mvc.Cookies;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Volo.Abp;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
@@ -10,6 +11,7 @@ using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Settings;
+using Volo.Abp.Timing;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -28,6 +30,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected MemberRegistrationEnum RegistrationApprovalType = MemberRegistrationEnum.RequireEmailActivation;
         protected readonly IReCaptchaService RecaptchaService;
+
+        protected ICurrentTimezoneProvider CurrentTimezoneProvider => LazyServiceProvider.LazyGetRequiredService<ICurrentTimezoneProvider>();
+        protected ITimezoneProvider TimezoneProvider => LazyServiceProvider.LazyGetRequiredService<ITimezoneProvider>();
 
         public LocalLoginModel(IReCaptchaService recaptchaService) : base()
         {
@@ -191,7 +196,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (result.IsLockedOut)
                     {
-                        Alerts.Warning(L["UserLockedOutMessage"]);
+                        Alerts.Warning(L["UserLockedOutMessage", await GetLockoutRetryAtAsync(user)]);
                         return Page();
                     }
 
@@ -250,6 +255,48 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 returnUrl = ReturnUrl,
                 returnUrlHash = ReturnUrlHash
             });
+        }
+
+        /// <summary>
+        /// When a locked-out visitor may try again: the account's <c>LockoutEnd</c> in local time,
+        /// short date and time in the current culture, followed by the time zone it is expressed in.
+        /// </summary>
+        /// <remarks>
+        /// Local time is ABP's: the request's time zone when the host runs ABP's time-zone
+        /// middleware, otherwise the <c>Abp.Timing.TimeZone</c> setting (tenant or global; UTC by
+        /// default). <c>IClock.ConvertToUserTime</c> is not used because it converts only when the
+        /// clock kind is UTC and the middleware has set a request zone, so without the middleware
+        /// it would ignore the setting.
+        /// </remarks>
+        protected virtual async Task<string> GetLockoutRetryAtAsync(IdentityUser user)
+        {
+            // Identity reports a lockout only while LockoutEnd is in the future, so it is set here.
+            var lockoutEnd = await UserManager.GetLockoutEndDateAsync(user) ?? DateTimeOffset.UtcNow;
+
+            var timeZone = CurrentTimezoneProvider.TimeZone;
+            if (string.IsNullOrWhiteSpace(timeZone))
+            {
+                timeZone = await SettingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
+            }
+            if (string.IsNullOrWhiteSpace(timeZone))
+            {
+                timeZone = "UTC";
+            }
+
+            TimeZoneInfo zone;
+            try
+            {
+                zone = TimezoneProvider.GetTimeZoneInfo(timeZone!);
+            }
+            catch (Exception ex) when (ex is TimeZoneNotFoundException || ex is InvalidTimeZoneException)
+            {
+                // A misconfigured zone must not break sign-in; the time is still right in UTC.
+                timeZone = "UTC";
+                zone = TimeZoneInfo.Utc;
+            }
+
+            var retryAt = TimeZoneInfo.ConvertTime(lockoutEnd, zone);
+            return $"{retryAt.ToString("g", CultureInfo.CurrentCulture)} ({timeZone})";
         }
 
         protected virtual async Task CheckLocalLoginAsync()
