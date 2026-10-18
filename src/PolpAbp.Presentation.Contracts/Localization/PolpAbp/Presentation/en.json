@@ -23,6 +23,7 @@
     "MemberRegister": "Join an existing organization",
     "OrganizationDoesNotExist": "Is your organization not registered?",
     "OrganizationRegister": "Create your organization",
-    "Page:HelpfulLinks": "Helpful Links"
+    "Page:HelpfulLinks": "Helpful Links",
+    "UserLockedOutMessage": "Your account is locked. Try again after {0}."
   }
 }

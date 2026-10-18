@@ -1,0 +1,29 @@
+{
+  "culture": "zh-Hans",
+  "texts": {
+    "AlreadyRegistered": "已有账户？",
+    "Description:AdminEmailAddress": "拟定管理员的电子邮件地址。",
+    "Description:RememberClient": "如果可能，在此设备上将不再要求进行双因素验证。",
+    "Description:TenantName": "用于标识您组织的唯一名称。",
+    "Description:TenantOrEmailAddress": "您的电子邮件地址或组织名称",
+    "DisplayName:AccountId": "账户标识",
+    "DisplayName:AdminEmailAddress": "管理员电子邮件地址",
+    "DisplayName:FirstName": "名",
+    "DisplayName:LastName": "姓",
+    "DisplayName:RememberClient": "记住此设备",
+    "DisplayName:TenantName": "组织名称",
+    "DisplayName:ConfirmPassword": "确认密码",
+    "DisplayName:TenantOrEmailAddress": "您的电子邮件地址或组织名称",
+    "LoggedOutText": "您已退出登录！",
+    "Login:AccountAlreadyActive": "您的账户已激活。现在可以登录您的账户。",
+    "Login:AdminApprovalPending": "您的账户正在等待组织管理员审批。请稍后再来查看。",
+    "Login:EmailConfirmationRequired": "登录系统前，您必须先确认您的电子邮件地址。",
+    "Login:TenantIsRequired": "缺少您的组织信息。请输入组织信息以继续。",
+    "MainApp": "应用程序页面",
+    "MemberRegister": "加入现有组织",
+    "OrganizationDoesNotExist": "您的组织尚未注册？",
+    "OrganizationRegister": "创建您的组织",
+    "Page:HelpfulLinks": "实用链接",
+    "UserLockedOutMessage": "您的账户已被锁定。请在 {0} 后重试。"
+  }
+}
