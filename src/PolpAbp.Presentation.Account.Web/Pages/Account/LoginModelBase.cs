@@ -111,11 +111,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         /// test can express an account with no e-mail address — a state the account model forbids
         /// at construction and whose setter is out of reach from the test assembly, yet one that
         /// reaches this code from stored data and, until this was fixed, blocked sign-in outright.
+        ///
+        /// Only the identifier the visitor chose travels on; the other is dropped here. Carrying
+        /// both let anyone who knew a username read the account's e-mail address from the password
+        /// page and the recovery pages without a password. Those pages resolve the account by
+        /// whichever identifier was carried. See chorigen-identity#86.
         /// </remarks>
         protected virtual void CaptureIdentifierHandoff(string? userName, string? emailAddress, bool isUsingUserName)
         {
-            UserName = userName;
-            EmailAddress = emailAddress;
+            UserName = isUsingUserName ? userName : null;
+            EmailAddress = isUsingUserName ? null : emailAddress;
             IsUsingUserName = isUsingUserName;
 
             StashIdentifierHandoff();

@@ -41,9 +41,20 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // which are not carried in the URL.
             ConsumeIdentifierHandoff();
 
-            if (!string.IsNullOrEmpty(NormalizedEmailAddress))
+            // Pre-fill whichever identifier the visitor typed, and only that one: after a
+            // username sign-in the account's e-mail address is never put on the page.
+            // See chorigen-identity#86.
+            Input.IsUsingUserName = IsUsingUserName;
+            if (!string.IsNullOrEmpty(SelectedIdentifier))
             {
-                Input.EmailAddress = NormalizedEmailAddress;
+                if (IsUsingUserName)
+                {
+                    Input.UserName = SelectedIdentifier;
+                }
+                else
+                {
+                    Input.EmailAddress = SelectedIdentifier;
+                }
             }
 
             return Page();
@@ -58,9 +69,18 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 try
                 {
+                    // Only the identifier the form carried is required.
+                    ModelState.Remove(Input.IsUsingUserName
+                        ? $"{nameof(Input)}.{nameof(InputModel.EmailAddress)}"
+                        : $"{nameof(Input)}.{nameof(InputModel.UserName)}");
+
                     ValidateModel();
 
-                    var  user = await UserManager.FindByEmailAsync(Input.EmailAddress);
+                    // Resolve the account by the identifier the visitor typed; the activation
+                    // message goes to the address on file, which the visitor need not know.
+                    var user = Input.IsUsingUserName
+                        ? await UserManager.FindByNameAsync(Input.UserName!)
+                        : await UserManager.FindByEmailAsync(Input.EmailAddress!);
 
                     if (user != null)
                     {
@@ -137,6 +157,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class InputModel
         {
+            /// <summary>Whether the visitor identifies the account by username rather than e-mail address.</summary>
+            public bool IsUsingUserName { get; set; }
+
+            [Required]
+            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxUserNameLength))]
+            public string? UserName { get; set; }
+
             [Required]
             [EmailAddress]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
