@@ -75,10 +75,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Resolve the account by the identifier the visitor typed; the message goes to
                     // the address on file, which the visitor need not know.
                     var user = Input.IsUsingUserName
-                        ? await UserManager.FindByNameAsync(Input.UserName!)
+                        ? await UserManager.FindByNameAsync(Input.UserName!.Trim())
                         : await UserManager.FindByEmailAsync(Input.EmailAddress!);
 
-                    if (user != null)
+                    // An account with no address on file cannot receive the link, so the page
+                    // answers as for an unknown identifier (chorigen-identity#86 review).
+                    if (user != null && !string.IsNullOrWhiteSpace(user.Email))
                     {
                         // todo: Should we use the background ??
                         // In that case, the email may not be sent instantly.

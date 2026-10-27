@@ -79,7 +79,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Resolve the account by the identifier the visitor typed; the activation
                     // message goes to the address on file, which the visitor need not know.
                     var user = Input.IsUsingUserName
-                        ? await UserManager.FindByNameAsync(Input.UserName!)
+                        ? await UserManager.FindByNameAsync(Input.UserName!.Trim())
                         : await UserManager.FindByEmailAsync(Input.EmailAddress!);
 
                     if (user != null)
@@ -92,6 +92,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             }
                             else
                             {
+                                // An account with no address on file cannot receive the link, so
+                                // the page answers as for an unknown identifier (chorigen-identity#86 review).
+                                if (string.IsNullOrWhiteSpace(user.Email))
+                                {
+                                    return Page();
+                                }
 
                                 // Otherwise, send out the email confirmation link.
                                 // Send it instantly, because the user is waiting for it.
@@ -114,6 +120,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             if (RegistrationApprovalType == MemberRegistrationEnum.RequireAdminApprovel)
                             {
                                 Alerts.Warning(L["Login:AdminApprovalPending"]);
+                                return Page();
+                            }
+
+                            // An account with no address on file cannot receive the link, so the
+                            // page answers as for an unknown identifier (chorigen-identity#86 review).
+                            if (string.IsNullOrWhiteSpace(user.Email))
+                            {
                                 return Page();
                             }
 

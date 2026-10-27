@@ -18,10 +18,19 @@
     Need a New Activation Email?
 </h1>
 
-<p>
-    We noticed you might be having trouble activating your account.
-    No worries! Enter the email address you used to register below and we'll send you a fresh activation link.
-</p>
+@if (Model.Input.IsUsingUserName)
+{
+    <p>
+        Enter your username and we'll send a new activation link to the e-mail address on your account.
+    </p>
+}
+else
+{
+    <p>
+        We noticed you might be having trouble activating your account.
+        No worries! Enter the email address you used to register below and we'll send you a fresh activation link.
+    </p>
+}
 
 <form method="post">
 
