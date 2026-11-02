@@ -170,6 +170,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return Page();
                         }
 
+                        // The password is verified: reset the failed count, as the sign-in call does for
+                        // an active account, so failures neither accumulate across correct attempts nor
+                        // carry over after activation.
+                        await UserManager.ResetAccessFailedCountAsync(user);
+
                         var deactivatedBy = user.GetProperty<Guid?>(Framework.Extensions.ExternalProperties.UserIdentity.DeactivatedBy);
                         if (deactivatedBy.HasValue)
                         {

@@ -23,7 +23,7 @@
 </h1>
 <div class="mb-4">
     <a class="cg-back" href="@Url.Page("./MemberRegister")">
-        <i class="fas fa-chevron-left me-1"></i>Back
+        <i class="fas fa-chevron-left me-1"></i>@L["Account_Back"]
     </a>
 </div>
 
@@ -41,7 +41,7 @@
         <span> * </span>
         <div class="input-group">
             <input class="form-control" id="Input_Password" type="password" autocomplete="new-password" asp-for="Input.Password" />
-            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="Show password" aria-pressed="false">
+            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="@L["Account_ShowPassword"].Value" aria-pressed="false">
                 <i class="toggle-icon far fa-eye"></i>
             </button>
         </div>
@@ -52,7 +52,7 @@
         <span> * </span>
         <div class="input-group">
             <input class="form-control" id="Input_ConfirmPassword" type="password" autocomplete="new-password" asp-for="Input.ConfirmPassword" />
-            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="Show password" aria-pressed="false">
+            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="@L["Account_ShowPassword"].Value" aria-pressed="false">
                 <i class="toggle-icon far fa-eye"></i>
             </button>
         </div>
