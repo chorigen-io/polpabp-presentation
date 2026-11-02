@@ -1,5 +1,8 @@
-﻿@using Volo.Abp.AspNetCore.Mvc.UI.Theming
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Theming
 @inject IThemeManager ThemeManager
+@inject IHtmlLocalizer<AccountResource> L
 @{
     Layout = ThemeManager.CurrentTheme.GetAccountLayout();
 }
@@ -12,7 +15,9 @@
     @await RenderSectionAsync("docReady", false)
 }
 
-<div class="abp-account-container">
+<div class="abp-account-container"
+     data-show-password-label="@L["Account_ShowPassword"].Value"
+     data-hide-password-label="@L["Account_HidePassword"].Value">
     @RenderBody()
 </div>
 
@@ -21,7 +26,9 @@
     // step with what it does. Capture phase is required: the visibility booter's
     // own click handler stops propagation, so a bubble-phase listener never runs.
     // The booter also reveals every wrapped password field on the page at once,
-    // so all toggle buttons move to the new state together.
+    // so all toggle buttons move to the new state together. The two accessible
+    // names are localized on the server into the container's data attributes.
+    var passwordLabels = document.querySelector('.abp-account-container').dataset;
     document.addEventListener('click', function (evt) {
         var button = evt.target.closest ? evt.target.closest('.toggle-password') : null;
         if (!button) {
@@ -32,7 +39,7 @@
         var toggles = document.querySelectorAll('.toggle-password');
         for (var i = 0; i < toggles.length; i++) {
             toggles[i].setAttribute('aria-pressed', revealed ? 'true' : 'false');
-            toggles[i].setAttribute('aria-label', revealed ? 'Hide password' : 'Show password');
+            toggles[i].setAttribute('aria-label', revealed ? passwordLabels.hidePasswordLabel : passwordLabels.showPasswordLabel);
         }
     }, true);
 </script>
