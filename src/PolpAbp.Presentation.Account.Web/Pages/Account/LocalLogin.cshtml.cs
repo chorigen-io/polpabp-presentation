@@ -141,9 +141,35 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         }
                     }
 
-                    // Check if the user is allowed to login or not 
+                    // Check if the user is allowed to login or not
                     if (user.IsActive == false)
                     {
+                        // An account's state is told only to whoever proves its password
+                        // (chorigen-identity#423). The sign-in call below cannot do that check for
+                        // an inactive account: its pre-sign-in check refuses before it compares the
+                        // password. So the password is compared here, the way that call does it for
+                        // an active account: a lockout first, a failure counted towards the lockout,
+                        // and a wrong password answered as it is for an active account.
+                        if (await UserManager.IsLockedOutAsync(user))
+                        {
+                            Alerts.Warning(L["UserLockedOutMessage", await GetLockoutRetryAtAsync(user)]);
+                            return Page();
+                        }
+
+                        if (!await UserManager.CheckPasswordAsync(user, Input.Password!))
+                        {
+                            await UserManager.AccessFailedAsync(user);
+
+                            if (await UserManager.IsLockedOutAsync(user))
+                            {
+                                Alerts.Warning(L["UserLockedOutMessage", await GetLockoutRetryAtAsync(user)]);
+                                return Page();
+                            }
+
+                            Alerts.Danger(L["InvalidUserNameOrPassword"]);
+                            return Page();
+                        }
+
                         var deactivatedBy = user.GetProperty<Guid?>(Framework.Extensions.ExternalProperties.UserIdentity.DeactivatedBy);
                         if (deactivatedBy.HasValue)
                         {

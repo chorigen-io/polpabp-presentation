@@ -10,7 +10,7 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewData["Title"] = "Sign In (Username/Password)";
+    ViewData["Title"] = L["Account_VerifyPassword_Title"].Value;
     ViewData["Description"] = "Log in to your account using your username and password.";
     ViewData["Keywords"] = "login, sign in, account, username, email, password";
     ViewData["ShowResetButton"] = true;
@@ -20,8 +20,7 @@
 {
     <div class="alert alert-danger" role="alert">
         <p>
-            To keep things secure,
-            we need you to activate your account using the link in the email we sent you. We can send you a new one.
+            @L["Account_VerifyPassword_ActivationRequired"]
         </p>
         <form method="post">
             @* The identifiers are no longer in this page's URL, so every form carries them itself:
@@ -36,22 +35,27 @@
                 <input type="hidden" asp-for="EmailAddress" />
             }
             <input type="hidden" asp-for="IsUsingUserName" />
+            @* The button sits inside the sentence, so the sentence is one resource with a
+               placeholder for it: a translation may put the button wherever its grammar needs. *@
+            @{
+                Func<object, object> resendButton = @<button type="submit" name="Action" value="ResendActivation" class="btn btn-link p-0 align-baseline">@L["Account_VerifyPassword_ResendActivation_Button"]</button>;
+            }
             <p>
-                Click <button type="submit" name="Action" value="ResendActivation" class="btn btn-link p-0 align-baseline">here</button> to request a new activation email.
+                @L["Account_VerifyPassword_ResendActivation", resendButton(null!)]
             </p>
         </form>
         <p>
-            Once your account is activated, you can return here to sign in.
+            @L["Account_VerifyPassword_ReturnAfterActivation"]
         </p>
     </div>
 }
 
 <h1 class="mb-1 h3">
-    Enter Password
+    @L["Account_VerifyPassword_Heading"]
 </h1>
 <div class="mb-4">
     <a class="cg-back" href="@Url.Page("./Login")">
-        <i class="fas fa-chevron-left me-1"></i>Back
+        <i class="fas fa-chevron-left me-1"></i>@L["Account_Back"]
     </a>
 </div>
 
@@ -87,7 +91,7 @@
         <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1" aria-hidden="true">*</span></label>
         <div class="input-group">
             <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" aria-required="true" />
-            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="Show password" aria-pressed="false">
+            <button type="button" class="toggle-password btn btn-outline-secondary" aria-label="@L["Account_ShowPassword"]" aria-pressed="false">
                 <i class="toggle-icon fa fa-eye"></i>
             </button>
         </div>

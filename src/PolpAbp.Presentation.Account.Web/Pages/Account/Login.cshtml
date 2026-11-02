@@ -12,7 +12,7 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewData["Title"] = "Sign In";
+    ViewData["Title"] = L["Account_SignIn_Title"].Value;
     ViewData["Description"] = "Sign in with your username/email or use SSO to log in quickly and easily";
     ViewData["Keywords"] = "login, sign in, account, SSO, username, email, password";
     ViewData["HideTenancyView"] = false;
@@ -209,15 +209,15 @@
     </script>
 }
 
-<h1 class="mb-1 h3">Sign In</h1>
+<h1 class="mb-1 h3">@L["Account_SignIn_Heading"]</h1>
 <div class="mb-4" data-bind="visible: hasUserOptions">
     <a class="go-back" style="cursor:pointer;">
-        <i class="fa fa-chevron-left me-1"></i>Back
+        <i class="fa fa-chevron-left me-1"></i>@L["Account_Back"]
     </a>
 </div>
 <div class="mb-4" data-bind="visible: hasNoUserOptions">
     <a class="cg-back"  href="@Url.Page("./FindOrganization")">
-        <i class="fas fa-chevron-left me-1"></i>Back
+        <i class="fas fa-chevron-left me-1"></i>@L["Account_Back"]
     </a>
 </div>
 
