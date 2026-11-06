@@ -126,6 +126,29 @@
             });
         }
 
+        // Keyboard focus never drops to the page when a chooser control hides or re-renders
+        // itself (R10-F1 review): the identifier input the form shows, or, after a remove, the
+        // remove button now in the removed row's place, else the last one, else "use a different
+        // account".
+        function focusIdentifierInput() {
+            setTimeout(() => {
+                (viewModel.isUsingUserName() ? $('#Input_UserName') : $('#Input_EmailAddress')).focus();
+            });
+        }
+
+        function focusAfterRemove(index) {
+            if (!viewModel.optionsVisible()) {
+                focusIdentifierInput();
+                return;
+            }
+            const $removes = $('.pick-one-account .delete-me');
+            if ($removes.length) {
+                $removes.eq(Math.min(index, $removes.length - 1)).focus();
+            } else {
+                $('.pick-one-account .new-account').focus();
+            }
+        }
+
         $(document).ready(() => {
 
             // Check if we have the right version
@@ -141,6 +164,7 @@
 
             $(".card").on('click', '.delete-me', (evt) => {
                 const $target = $(evt.target).closest('.delete-me');
+                const index = $('.pick-one-account .delete-me').index($target);
                 const email = $target.data('email');
                 if (email) {
                     let users = Lockr.get('users');
@@ -148,6 +172,7 @@
                         users = users.filter(a => !(a.email.toLowerCase() == email.toLowerCase() && a.tenantId == tenantId));
                         Lockr.set('users', users);
                         refreshUserOptions(true);
+                        focusAfterRemove(index);
                     }
                 } else {
                     const userName = $target.data('username');
@@ -157,6 +182,7 @@
                             users = users.filter(a => !(a.userName.toLowerCase() == userName.toLowerCase() && a.tenantId == tenantId));
                             Lockr.set('users', users);
                             refreshUserOptions(true);
+                            focusAfterRemove(index);
                         }
                     }
                 }
@@ -180,6 +206,7 @@
 
             $(".card").on('click', '.new-account', () => {
                 viewModel.optionsVisible(false);
+                focusIdentifierInput();
             });
 
             $(".card").on('click', 'a.go-back', () => {
