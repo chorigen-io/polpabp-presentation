@@ -28,8 +28,18 @@
         const isRecaptchaVisible = @Model.IsRecaptchaEnabled.ToString().ToLower();
         Lockr.prefix = 'lockr_';
 
+        // The localized accessible-name format of a stored account's remove button, read from
+        // the attribute Razor encoded it into; {0} is the account. The replacement is a function
+        // so that a '$' in an address is never read as a replacement pattern, and Knockout's
+        // attr binding writes the result as an attribute value, never as markup.
+        const removeAccountLabelFormat = document.querySelector('.pick-one-account').getAttribute('data-remove-account-label') || '';
+
         function AppViewModel() {
             var self = this;
+
+            self.removeAccountLabel = function (account) {
+                return removeAccountLabelFormat.replace('{0}', function () { return account; });
+            };
 
             self.optionsVisible = ko.observable(false);
             self.users = ko.observable([]);
@@ -116,6 +126,29 @@
             });
         }
 
+        // Keyboard focus never drops to the page when a chooser control hides or re-renders
+        // itself (R10-F1 review): the identifier input the form shows, or, after a remove, the
+        // remove button now in the removed row's place, else the last one, else "use a different
+        // account".
+        function focusIdentifierInput() {
+            setTimeout(() => {
+                (viewModel.isUsingUserName() ? $('#Input_UserName') : $('#Input_EmailAddress')).focus();
+            });
+        }
+
+        function focusAfterRemove(index) {
+            if (!viewModel.optionsVisible()) {
+                focusIdentifierInput();
+                return;
+            }
+            const $removes = $('.pick-one-account .delete-me');
+            if ($removes.length) {
+                $removes.eq(Math.min(index, $removes.length - 1)).focus();
+            } else {
+                $('.pick-one-account .new-account').focus();
+            }
+        }
+
         $(document).ready(() => {
 
             // Check if we have the right version
@@ -129,8 +162,9 @@
                 Lockr.set('system', system);
             }
 
-            $(".card").on('click', 'a.delete-me', (evt) => {
-                const $target = $(evt.target).closest('a');
+            $(".card").on('click', '.delete-me', (evt) => {
+                const $target = $(evt.target).closest('.delete-me');
+                const index = $('.pick-one-account .delete-me').index($target);
                 const email = $target.data('email');
                 if (email) {
                     let users = Lockr.get('users');
@@ -138,6 +172,7 @@
                         users = users.filter(a => !(a.email.toLowerCase() == email.toLowerCase() && a.tenantId == tenantId));
                         Lockr.set('users', users);
                         refreshUserOptions(true);
+                        focusAfterRemove(index);
                     }
                 } else {
                     const userName = $target.data('username');
@@ -147,13 +182,17 @@
                             users = users.filter(a => !(a.userName.toLowerCase() == userName.toLowerCase() && a.tenantId == tenantId));
                             Lockr.set('users', users);
                             refreshUserOptions(true);
+                            focusAfterRemove(index);
                         }
                     }
                 }
             });
 
-            $(".card").on('click', 'a.pick-me', (evt) => {
-                const $target = $(evt.target).closest('a');
+            // The pick control is a link (href="#") so that it is focusable and Enter activates
+            // it; the default is prevented so the address does not change.
+            $(".card").on('click', '.pick-me', (evt) => {
+                evt.preventDefault();
+                const $target = $(evt.target).closest('.pick-me');
                 const email = $target.data('email');
                 if (email) {
                     viewModel.optionsVisible(false);
@@ -165,8 +204,9 @@
                 }
             });
 
-            $(".card").on('click', 'a.new-account', () => {
+            $(".card").on('click', '.new-account', () => {
                 viewModel.optionsVisible(false);
+                focusIdentifierInput();
             });
 
             $(".card").on('click', 'a.go-back', () => {
@@ -222,7 +262,13 @@
 </div>
 
 <!-- Pick an account -->
-<div class="pick-one-account" data-bind="visible: optionsVisible">
+@*  Every control of the chooser is reachable by keyboard (R10-F1): the pick control stays a
+    link, with an href, so the address heading inside it keeps its heading role; the remove and
+    "use a different account" controls are buttons, because they change the page rather than
+    navigate. The remove button's accessible name names the account, from the format below,
+    written as .Value so Razor attribute-encodes it. *@
+<div class="pick-one-account" data-bind="visible: optionsVisible"
+     data-remove-account-label="@L["Account_SignIn_RemoveAccount"].Value">
     <p>
         @L["Account_SignIn_PickAccount"]
     </p>
@@ -233,16 +279,16 @@
             </div>
             <div class="flex-grow-1 ms-3">
                 <div class="d-flex flex-row justify-content-between mb-0">
-                    <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
+                    <a class="pick-me" href="#" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
                         <h6 data-bind="text: email" class="text-dark">
                         </h6>
                         <p class="text-muted">
                             Last login: <span data-bind="text: lastUpdated"></span>
                         </p>
                     </a>
-                    <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                    <button type="button" class="delete-me btn btn-link text-danger px-2 py-0 border-0 align-self-start" data-bind="attr: {'data-email': email, 'aria-label': $root.removeAccountLabel(email)}">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
         </li>
@@ -252,16 +298,16 @@
             </div>
             <div class="flex-grow-1 ms-3">
                 <div class="d-flex flex-row justify-content-between mb-0">
-                    <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-username': userName}">
+                    <a class="pick-me" href="#" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-username': userName}">
                         <h6 data-bind="text: userName" class="text-dark">
                         </h6>
                         <p class="text-muted">
                             Last login: <span data-bind="text: lastUpdated"></span>
                         </p>
                     </a>
-                    <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-username': userName}">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                    <button type="button" class="delete-me btn btn-link text-danger px-2 py-0 border-0 align-self-start" data-bind="attr: {'data-username': userName, 'aria-label': $root.removeAccountLabel(userName)}">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
         </li>
@@ -272,9 +318,9 @@
                 <i class="fas fa-plus-circle fa-2x"></i>
             </div>
             <div class="flex-grow-1 ms-3">
-                <a class="h6 new-account pe-5" style="cursor: pointer">
+                <button type="button" class="btn btn-link h6 mb-0 p-0 pe-5 text-start new-account">
                     @L["Account_SignIn_UseDifferentAccount"]
-                </a>
+                </button>
             </div>
         </li>
     </ul>
