@@ -76,6 +76,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 try
                 {
+                    // Only the identifier in use need be posted. The page's script fills the
+                    // hidden one with a placeholder on every path that shows the form except
+                    // 'Use a different account', so an empty hidden identifier gets the same
+                    // placeholder here and its [Required] error, recorded at binding, is dropped.
+                    if (Input.IsUsingUserName)
+                    {
+                        if (string.IsNullOrEmpty(Input.EmailAddress))
+                        {
+                            Input.EmailAddress = "__dummy@dummy.net";
+                            ModelState.Remove($"{nameof(Input)}.{nameof(LoginInputModel.EmailAddress)}");
+                        }
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(Input.UserName))
+                        {
+                            Input.UserName = "__dummy";
+                            ModelState.Remove($"{nameof(Input)}.{nameof(LoginInputModel.UserName)}");
+                        }
+                    }
+
                     ValidateModel();
 
                     // Extra sanity check 
