@@ -150,7 +150,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected override void ValidateModel()
         {
-            var passwordValidator = new PasswordValidator(PwdComplexity, L, ModelState);
+            var passwordValidator = new PasswordValidator(PwdComplexity, L, ModelState, "Input.Password", "Input.ConfirmPassword");
             if (passwordValidator.ValidateComplexity(Input.Password))
             {
                 passwordValidator.ValidateConfirmPassword(Input.Password, Input.ConfirmPassword);
