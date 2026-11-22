@@ -5,7 +5,9 @@ using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
+using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -22,7 +24,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public bool IsRegistrationEnabled { get; set; }
 
+        /// <summary>
+        /// Set when the posted name is one another organization already uses: the page stays on
+        /// this step and offers the next step (find that organization, or choose another name).
+        /// </summary>
+        public bool IsTenantNameTaken { get; set; }
+
         protected readonly IAppCookieManager CookieManager;
+
+        protected ITenantNormalizer TenantNormalizer => LazyServiceProvider.LazyGetRequiredService<ITenantNormalizer>();
 
         public RegisterModel(IAppCookieManager cookieManager) : base()
         {
@@ -66,6 +76,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Validate model
                     ValidateModel();
 
+                    // Check availability here, where the step promises it, rather than leaving the
+                    // first check to the confirm step's tenant creation.
+                    if (await IsTenantNameTakenAsync(Input.TenantName!))
+                    {
+                        IsTenantNameTaken = true;
+                        return Page();
+                    }
+
                     if (!string.Equals(TempData.Peek(nameof(PostInput.TenantName))?.ToString(), Input.TenantName))
                     {
                         // Clean up data 
@@ -88,6 +106,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             return Page();
+        }
+
+        protected virtual async Task<bool> IsTenantNameTakenAsync(string tenantName)
+        {
+            // The same normalized-name lookup TenantManager makes when it creates the tenant.
+            var existing = await TenantRepository.FindByNameAsync(TenantNormalizer.NormalizeName(tenantName), includeDetails: false);
+            return existing != null;
         }
 
         protected override async Task LoadSettingsAsync()

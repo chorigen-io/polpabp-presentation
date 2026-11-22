@@ -44,6 +44,23 @@
     Let's get started! Enter your organization name to check availability.
 </p>
 
+@if (Model.IsTenantNameTaken)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>
+            @L["Account_OrganizationSignUp_NameTaken"]
+        </p>
+        @* The link sits inside the sentence, so the sentence is one resource with a placeholder
+           for it: a translation may put the link wherever its grammar needs. *@
+        @{
+            Func<object, object> findOrganizationLink = @<a href="@Url.Page("./FindOrganization")">@L["Account_OrganizationSignUp_NameTaken_FindOrganization"]</a>;
+        }
+        <p class="mb-0">
+            @L["Account_OrganizationSignUp_NameTaken_NextStep", findOrganizationLink(null!)]
+        </p>
+    </div>
+}
+
 <form method="post" class="py-3" spellcheck="false">
 
     <abp-input asp-for="Input.TenantName" auto-focus="true" autocomplete="organization" />

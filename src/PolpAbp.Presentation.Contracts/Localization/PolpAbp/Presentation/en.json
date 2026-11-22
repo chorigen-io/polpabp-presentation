@@ -3,6 +3,9 @@
   "texts": {
     "Account_Back": "Back",
     "Account_HidePassword": "Hide password",
+    "Account_OrganizationSignUp_NameTaken": "This organization name is already taken.",
+    "Account_OrganizationSignUp_NameTaken_FindOrganization": "find that organization",
+    "Account_OrganizationSignUp_NameTaken_NextStep": "If it is your organization, {0} to sign in. Otherwise, choose another name.",
     "Account_ShowPassword": "Show password",
     "Account_SignIn_Heading": "Sign In",
     "Account_SignIn_Title": "Sign In",
