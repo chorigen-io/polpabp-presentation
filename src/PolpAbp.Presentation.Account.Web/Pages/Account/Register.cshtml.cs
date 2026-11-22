@@ -7,7 +7,6 @@ using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
-using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -76,9 +75,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Validate model
                     ValidateModel();
 
+                    // Surrounding spaces are not part of the name: look up and keep the trimmed name.
+                    Input.TenantName = Input.TenantName!.Trim();
+
                     // Check availability here, where the step promises it, rather than leaving the
                     // first check to the confirm step's tenant creation.
-                    if (await IsTenantNameTakenAsync(Input.TenantName!))
+                    if (await IsTenantNameTakenAsync(Input.TenantName))
                     {
                         IsTenantNameTaken = true;
                         return Page();

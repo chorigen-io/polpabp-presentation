@@ -46,14 +46,17 @@
 
 @if (Model.IsTenantNameTaken)
 {
-    <div class="alert alert-danger" role="alert">
+    @* The name field points at this alert (aria-describedby below), so assistive technology reads
+       it with the field. *@
+    <div id="TenantNameTaken" class="alert alert-danger" role="alert">
         <p>
             @L["Account_OrganizationSignUp_NameTaken"]
         </p>
         @* The link sits inside the sentence, so the sentence is one resource with a placeholder
-           for it: a translation may put the link wherever its grammar needs. *@
+           for it: a translation may put the link wherever its grammar needs. It carries the typed
+           name, which the find-organization page searches for on arrival. *@
         @{
-            Func<object, object> findOrganizationLink = @<a href="@Url.Page("./FindOrganization")">@L["Account_OrganizationSignUp_NameTaken_FindOrganization"]</a>;
+            Func<object, object> findOrganizationLink = @<a href="@Url.Page("./FindOrganization", new { TenantName = Model.Input.TenantName })">@L["Account_OrganizationSignUp_NameTaken_FindOrganization"]</a>;
         }
         <p class="mb-0">
             @L["Account_OrganizationSignUp_NameTaken_NextStep", findOrganizationLink(null!)]
@@ -63,7 +66,9 @@
 
 <form method="post" class="py-3" spellcheck="false">
 
-    <abp-input asp-for="Input.TenantName" auto-focus="true" autocomplete="organization" />
+    <abp-input asp-for="Input.TenantName" auto-focus="true" autocomplete="organization"
+               aria-invalid="@(Model.IsTenantNameTaken ? "true" : null)"
+               aria-describedby="@(Model.IsTenantNameTaken ? "TenantNameTaken" : null)" />
 
     <div class="d-grid gap-2">
         <abp-button type="submit" button-type="Primary" name="Action" value="Input">
