@@ -3,6 +3,9 @@
   "texts": {
     "Account_Back": "返回",
     "Account_HidePassword": "隐藏密码",
+    "Account_OrganizationSignUp_NameTaken": "该组织名称已被使用。",
+    "Account_OrganizationSignUp_NameTaken_FindOrganization": "查找该组织",
+    "Account_OrganizationSignUp_NameTaken_NextStep": "如果这是您的组织，请{0}并登录；否则，请选择其他名称。",
     "Account_ShowPassword": "显示密码",
     "Account_SignIn_Heading": "登录",
     "Account_SignIn_Title": "登录",
