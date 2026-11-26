@@ -76,10 +76,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // the address on file, which the visitor need not know.
                     var user = Input.IsUsingUserName
                         ? await UserManager.FindByNameAsync(Input.UserName!.Trim())
-                        : await UserManager.FindByEmailAsync(Input.EmailAddress!);
+                        : await UserManager.FindByEmailAsync(Input.EmailAddress!.Trim());
 
-                    // An account with no address on file cannot receive the link, so the page
-                    // answers as for an unknown identifier (chorigen-identity#86 review).
+                    // A request that completes answers every identifier with the same redirect, so
+                    // the answer does not tell a visitor whether one holds an account
+                    // (chorigen-identity#458); the link is sent only to an account with an address
+                    // on file (chorigen-identity#86 review).
                     if (user != null && !string.IsNullOrWhiteSpace(user.Email))
                     {
                         // todo: Should we use the background ??
@@ -95,15 +97,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             cc: cc,
                             returnUrl: ReturnUrl,
                             returnUrlHash: ReturnUrlHash);
+                    }
 
-                        // For security reason, we will redirect the user to another page regardless 
-                        // whether the user exits or not.
-                        return RedirectToPage("/Account/PasswordResetLinkSent");
-                    }
-                    else
-                    {
-                        Alerts.Danger("We couldn't find an account associated with that email address. Please double-check the email you entered and try again.");
-                    }
+                    // For security reason, we redirect the visitor to the link-sent page whether
+                    // the account exists or not.
+                    return RedirectToPage("/Account/PasswordResetLinkSent");
                 }
                 catch (UserFriendlyException e)
                 {
