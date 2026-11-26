@@ -83,6 +83,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     if (await IsTenantNameTakenAsync(Input.TenantName))
                     {
                         IsTenantNameTaken = true;
+                        // The alert above the form is the summary, with its next step; the field's
+                        // own validation slot carries the same sentence inline.
+                        ModelState.AddModelError($"{nameof(Input)}.{nameof(PostInput.TenantName)}",
+                            L["Account_OrganizationSignUp_NameTaken"].Value);
                         return Page();
                     }
 
