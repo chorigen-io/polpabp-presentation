@@ -14,9 +14,14 @@
     ViewData["Keywords"] = "request account activation link,account activation link,activate account";
 }
 
-<h1 class="mb-4 fs-3">
+<h1 class="mb-1 fs-3">
     Need a New Activation Email?
 </h1>
+<div class="mb-4">
+    <a class="cg-back" href="@Url.Page("/Account/LocalLogin")">
+        <i class="fas fa-chevron-left me-1"></i>@L["Account_Back"]
+    </a>
+</div>
 
 @if (Model.Input.IsUsingUserName)
 {
